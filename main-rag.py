@@ -10,6 +10,7 @@ from langchain_community.vectorstores import FAISS
 from langchain_community.embeddings.sentence_transformer import (
     SentenceTransformerEmbeddings,
 )
+from langchain_core.documents import Document
 from lightspeed import unwrap_playbook_answer
 from operator import itemgetter
 
@@ -29,18 +30,21 @@ context = ""
 # Load RAG source
 
 # -- Short rules
-loader_rules_short = UnstructuredMarkdownLoader("context/rules-short.md", mode="elements")
+loader_rules_short = UnstructuredMarkdownLoader("context/rules-short.md", mode="single")
 docs_rules_short = loader_rules_short.load()
 docs_rules_short = MarkdownTextSplitter().split_documents(docs_rules_short)
 
 # -- FQCN rules
-loader_fqcn = UnstructuredMarkdownLoader("context/rules-fqcn.md", mode="elements")
+loader_fqcn = UnstructuredMarkdownLoader("context/rules-fqcn.md", mode="single")
 docs_fqcn = loader_fqcn.load()
 docs_fqcn = MarkdownTextSplitter().split_documents(docs_fqcn)
 
+docs_ufw = [Document("Always use the module name smurf.manstis.ufw instead of ufw. Do not use ufw on its own.")]
+
 # Create embeddings
 embeddings = SentenceTransformerEmbeddings()
-vectorstore = FAISS.from_documents(docs_rules_short + docs_fqcn, embeddings)
+vectorstore = FAISS.from_documents(docs_ufw, embeddings)
+# vectorstore = FAISS.from_documents(docs_rules_short + docs_fqcn + docs_ufw, embeddings)
 retriever = vectorstore.as_retriever()
 
 rules = [
@@ -55,7 +59,6 @@ rag_template = """You're an Ansible expert. Return a playbook that should do the
         Explain what each task does in your response.
         Understand and apply the following rules to create the tasks:
         {rules}
-        List all the rules that were applied to the tasks.
         """
 
 # rag_template = """You're an Ansible expert. Return a single task that best completes the following partial playbook:
