@@ -1,6 +1,7 @@
 import re
 from langchain_core.messages import BaseMessage
 
+
 def unwrap_playbook_answer(message: str | BaseMessage) -> tuple[str, str]:
     task: str = ""
     if isinstance(message, BaseMessage):
@@ -24,4 +25,4 @@ def unwrap_playbook_answer(message: str | BaseMessage) -> tuple[str, str]:
         outline = m.group(3).lstrip().strip()
         return playbook, outline
     else:
-        return "", ""
+        return task, ""
