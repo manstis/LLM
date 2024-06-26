@@ -1,4 +1,7 @@
 # LangChain supports many other chat models. Here, we're using Ollama
+import getpass
+import os
+
 from langchain_community.chat_models import ChatOllama
 from langchain_core.prompts import PromptTemplate
 from langchain_community.document_loaders import UnstructuredMarkdownLoader
@@ -9,6 +12,11 @@ from langchain_community.embeddings.sentence_transformer import (
 )
 from lightspeed import unwrap_playbook_answer
 from operator import itemgetter
+
+# os.environ["LANGCHAIN_TRACING_V2"] = "true"
+# os.environ["LANGCHAIN_API_KEY"] = getpass.getpass()
+# os.environ["LANGCHAIN_ENDPOINT"] = "https://api.smith.langchain.com"
+# os.environ["LANGCHAIN_PROJECT"] = "pr-grumpy-lever-34"
 
 llm = ChatOllama(model="llama3")
 
@@ -45,8 +53,9 @@ rag_template = """You're an Ansible expert. Return a playbook that should do the
         {context}{prompt}
         Return only YAML.
         Explain what each task does in your response.
-        Understand and apply the following rules to create the task:
+        Understand and apply the following rules to create the tasks:
         {rules}
+        List all the rules that were applied to the tasks.
         """
 
 # rag_template = """You're an Ansible expert. Return a single task that best completes the following partial playbook:
