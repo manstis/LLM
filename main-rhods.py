@@ -2,9 +2,11 @@
 import getpass
 import os
 
-from langchain_community.chat_models import ChatOllama
+import httpx
+
 from langchain_core.prompts import PromptTemplate
 from langchain_community.document_loaders import UnstructuredMarkdownLoader
+from langchain_community.llms import VLLMOpenAI
 from langchain.text_splitter import MarkdownTextSplitter
 from langchain_community.vectorstores import FAISS
 from langchain_community.embeddings.sentence_transformer import (
@@ -19,7 +21,16 @@ from operator import itemgetter
 # os.environ["LANGCHAIN_ENDPOINT"] = "https://api.smith.langchain.com"
 # os.environ["LANGCHAIN_PROJECT"] = "pr-grumpy-lever-34"
 
-llm = ChatOllama(model="llama3")
+INFERENCE_SERVER_URL = "https://granite-3b-code-instruct-manstis-llms.apps.stage2-west.v2dz.p1.openshiftapps.com"
+MODEL_NAME = "granite-3b-code-instruct"
+
+llm = VLLMOpenAI(
+    openai_api_key="EMPTY",
+    openai_api_base=f"{INFERENCE_SERVER_URL}/v1",
+    model_name=MODEL_NAME,
+    async_client=httpx.AsyncClient(verify=False),
+    http_client=httpx.Client(verify=False)
+)
 
 # ================================
 # Ansible Lightspeed example
@@ -89,6 +100,7 @@ chain = (
         }
         | prompt_template | llm
 )
+
 message = chain.invoke(
     {
         "context": context,
@@ -96,7 +108,6 @@ message = chain.invoke(
         "prompt": prompt
     }
 )
-
 task, outline = unwrap_playbook_answer(message)
 print(task)
 print("-----")

@@ -22,7 +22,7 @@ HUMAN_MESSAGE_TEMPLATE = """
         This is what the playbook should do: {text}
         """
 
-text = f"Install apache and open port 8080"
+text = "Install apache and open port 8080"
 
 chat_template = ChatPromptTemplate.from_messages(
     [
