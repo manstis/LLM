@@ -21,8 +21,12 @@ from operator import itemgetter
 # os.environ["LANGCHAIN_ENDPOINT"] = "https://api.smith.langchain.com"
 # os.environ["LANGCHAIN_PROJECT"] = "pr-grumpy-lever-34"
 
-INFERENCE_SERVER_URL = "https://granite-3b-code-instruct-manstis-llms.apps.stage2-west.v2dz.p1.openshiftapps.com"
-MODEL_NAME = "granite-3b-code-instruct"
+# INFERENCE_SERVER_URL = "https://granite-20b-code-instruct-predictor-manstis-llms.apps.manstis-dev3.ys64.p1.openshiftapps.com"
+# MODEL_NAME = "granite-20b-code-instruct"
+# INFERENCE_SERVER_URL = "https://granite-3b-code-instruct-manstis-llms.apps.stage2-west.v2dz.p1.openshiftapps.com"
+# MODEL_NAME = "granite-3b-code-instruct"
+INFERENCE_SERVER_URL = "https://ibm-granite-7b-predictor-wisdom-model-hosting.apps.stage2-west.v2dz.p1.openshiftapps.com"
+MODEL_NAME = "ibm-granite-7b"
 
 llm = VLLMOpenAI(
     openai_api_key="EMPTY",
@@ -108,6 +112,8 @@ message = chain.invoke(
         "prompt": prompt
     }
 )
+print(message)
+print("-----")
 task, outline = unwrap_playbook_answer(message)
 print(task)
 print("-----")
